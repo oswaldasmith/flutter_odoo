@@ -25,9 +25,13 @@ class OdooClient extends OdooConnector {
       "context": {}
     };
     final response = await callRequest(url, createPayload(params));
+
+    // In a successful login, uid is an integer. If failed, uid is
+    // false.
+    bool didAuthenticate = response.getResult()['uid'] != false;
     final session = await getSessionInfo();
     return new AuthenticateCallback(
-        !response.hasError(), response, session.getSessionId());
+        didAuthenticate, response, session.getSessionId());
   }
 
   // Read records with given ids and fields
